@@ -72,6 +72,8 @@ def preprocess_and_predict(user_input):
 
     # Combine numerical and categorical DataFrames
     final_input_data = pd.concat([scaled_numerical_data, processed_cat_data], axis=1)
+    
+    final_input_data = final_input_data.values.reshape(-1, 1)
 
     # Load model and make prediction
     loaded_model = joblib.load('best_model.pkl')
