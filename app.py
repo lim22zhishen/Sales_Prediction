@@ -77,6 +77,30 @@ def preprocess_and_predict(user_input):
     loaded_model = joblib.load('best_model.pkl')
     prediction = loaded_model.predict(final_input_data)
 
+    # SHAP explanation
+    explainer = shap.TreeExplainer(loaded_model)
+    shap_values = explainer.shap_values(final_input_data)
+
+    st.write("### SHAP Explanation:")
+    shap.force_plot(explainer.expected_value, shap_values[0], final_input_data, matplotlib=True, show=False)
+    st.pyplot(bbox_inches='tight')
+
+    # Summary plot
+    st.subheader("Summary Plot")
+    fig, ax = plt.subplots()
+    shap.summary_plot(shap_values, final_input_data, show=False)
+    st.pyplot(fig)
+
+    input_df = pd.DataFrame(final_input_data, index=[0])
+    shap_values_input = explainer.shap_values(input_df)
+
+    # Force plot
+    st.subheader("Force Plot")
+    st_shap(shap.force_plot(explainer.expected_value[0], shap_values_input[0], input_df), height=400, width=1000)
+
+    st.subheader("Decision Plot")
+    st_shap(shap.decision_plot(explainer.expected_value[0], shap_values_input[0], final_input_data.columns))
+    
     # Display result
     st.write("### Prediction Result:")
     if prediction[0] == 1:
