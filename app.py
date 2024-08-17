@@ -4,6 +4,8 @@ import joblib
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
+import shap
+from streamlit_shap import st_shap
 
 # Function to get user inputs
 def get_user_inputs():
