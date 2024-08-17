@@ -1,18 +1,13 @@
-# Integrating SHAP into the Streamlit app for the file `streamlit_app_likert.py`
 
-streamlit_code_with_shap = """
 import streamlit as st
-import shap
-import pandas as pd
-import numpy as np
 import joblib
+import numpy as np
+import pandas as pd
 from sklearn.preprocessing import LabelEncoder
-import matplotlib.pyplot as plt
-from streamlit_shap import st_shap
 
 # Function to get user inputs
 def get_user_inputs():
-    st.title("Revenue Prediction Model with SHAP Analysis")
+    st.title("Revenue Prediction Model")
 
     Administrative = st.number_input("Enter your number of administrative pages visited:", min_value=0.0)
     Administrative_Duration = st.number_input("Enter the total duration (in seconds) spent on administrative pages:", min_value=0.0)
@@ -82,38 +77,18 @@ def preprocess_and_predict(user_input):
     loaded_model = joblib.load('best_model.pkl')
     prediction = loaded_model.predict(final_input_data)
 
-    return final_input_data, prediction, loaded_model
+    # Display result
+    st.write("### Prediction Result:")
+    if prediction[0] == 1:
+        st.success("Positive Revenue Prediction")
+    else:
+        st.error("Negative Revenue Prediction")
 
 def main():
     user_input = get_user_inputs()
 
     if st.button("Predict Revenue"):
-        input_df, prediction, model = preprocess_and_predict(user_input)
-
-        # Display prediction result
-        st.write(f"**Prediction:** {'Positive Revenue' if prediction[0] == 1 else 'Negative Revenue'}")
-
-        # SHAP analysis
-        st.header("SHAP Analysis")
-
-        explainer = shap.TreeExplainer(model)
-        shap_values = explainer.shap_values(input_df)
-
-        # Display SHAP force plot
-        st.subheader("Force Plot")
-        st_shap(shap.force_plot(explainer.expected_value[0], shap_values[0], input_df), height=400, width=1000)
-
-        # Display SHAP decision plot
-        st.subheader("Decision Plot")
-        st_shap(shap.decision_plot(explainer.expected_value[0], shap_values[0], input_df.columns))
+        preprocess_and_predict(user_input)
 
 if __name__ == "__main__":
     main()
-"""
-
-# Save the updated Streamlit code with SHAP to a new Python file
-streamlit_shap_file_path = "/mnt/data/streamlit_app_with_shap.py"
-with open(streamlit_shap_file_path, "w", encoding="utf-8") as f:
-    f.write(streamlit_code_with_shap)
-
-streamlit_shap_file_path
