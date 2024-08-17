@@ -82,7 +82,7 @@ def preprocess_and_predict(user_input):
     prediction = loaded_model.predict(final_input_data)
 
     # SHAP explanation
-    explainer = shap.KernelExplainer(loaded_model, final_input_data)
+    explainer = shap.KernelExplainer(loaded_model)
     shap_values = explainer.shap_values(final_input_data)
 
     st.write("### SHAP Explanation:")
